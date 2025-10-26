@@ -9,6 +9,7 @@ dependencies = [
     "langgraph>=1.0.1",
     "langgraph-cli[inmem]>=0.4.4",
     "lightrag-hku[api]",
+    "raganything>=1.2.8",
 ]
 
 [tool.uv.workspace]
@@ -18,3 +19,16 @@ members = [
 
 [tool.uv.sources]
 lightrag-hku = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.0.1",
+]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
+executionEnvironments = [
+  { root = ".", extraPaths = ["LightRAG", "LightRAG/src", "src"] }
+]
