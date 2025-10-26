@@ -4,4 +4,15 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "lightrag-hku",
+    "raganything[all]>=1.2.8",
+]
+
+[tool.uv.workspace]
+members = [
+    "LightRAG",
+]
+
+[tool.uv.sources]
+lightrag-hku = { workspace = true }
