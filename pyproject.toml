@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "lightrag-hku",
-    "raganything[all]>=1.2.8",
+    "langchain>=1.0.2",
+    "langgraph>=1.0.1",
+    "langgraph-cli[inmem]>=0.4.4",
+    "lightrag-hku[api]",
 ]
 
 [tool.uv.workspace]
