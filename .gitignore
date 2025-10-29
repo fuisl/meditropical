@@ -13,7 +13,6 @@ venv/
 
 # Enviroment Variable Files
 .env
-.env.example
 
 # Build / Distribution
 dist/
