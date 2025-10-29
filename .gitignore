@@ -74,3 +74,5 @@ test_*
 
 # Cline files
 memory-bank/
+
+uv.lock
