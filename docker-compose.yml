@@ -2,8 +2,8 @@ services:
   lightrag:
     image: ghcr.io/hkuds/lightrag:latest
     build:
-      context: ./LightRAG
-      dockerfile: ./LightRAG/Dockerfile
+      context: LightRAG
+      dockerfile: Dockerfile
       tags:
         - ghcr.io/hkuds/lightrag:latest
     ports:
