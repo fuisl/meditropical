@@ -5,17 +5,22 @@ from lightrag.utils import EmbeddingFunc, setup_logger
 from lightrag.kg.shared_storage import initialize_pipeline_status
 from lightrag.rerank import cohere_rerank
 import os, asyncio
+from pathlib import Path
 from dotenv import load_dotenv
 from typing import Callable, Any, Optional, Tuple
 from raganything import RAGAnything, RAGAnythingConfig
 
+# Get the repository root directory (3 levels up from this file)
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+DATA_DIR = REPO_ROOT / "data"
+
 # Load environment variables from project .env (do not override existing env vars)
-load_dotenv(dotenv_path=os.path.join(os.getcwd(), ".env"), override=False)
+load_dotenv(dotenv_path=REPO_ROOT / ".env", override=False)
 
 class LightRAGConfig(BaseModel):
     """Configuration for building a LightRAG instance. Values default from environment when available."""
-    input_dir: str = os.getenv("INPUT_DIR", "./data/inputs")
-    working_dir: str = os.getenv("WORKING_DIR", "./data/rag_storage")
+    input_dir: str = os.getenv("INPUT_DIR", str(DATA_DIR / "inputs"))
+    working_dir: str = os.getenv("WORKING_DIR", str(DATA_DIR / "rag_storage"))
     kv_storage: str = os.getenv("LIGHTRAG_KV_STORAGE", "PGKVStorage")
     vector_storage: str = os.getenv("LIGHTRAG_VECTOR_STORAGE", "QdrantVectorDBStorage")
     graph_storage: str = os.getenv("LIGHTRAG_GRAPH_STORAGE", "NetworkXStorage")
@@ -133,11 +138,60 @@ async def load_lightrag_from_env() -> tuple[LightRAG, Callable[..., Any]]:
     vision = _make_vision_model_func(rag)
     return rag, vision
 
-async def build_raganything():
-    lightrag, vision = await load_lightrag_from_env()
-
-    rag_anything = RAGAnything(
-        lightrag=lightrag,
-        llm_model_func=lightrag.llm_model_func,
-        vision_model_func=vision)
+async def build_raganything(cfg: Optional[LightRAGConfig] = None) -> RAGAnything:
+    """
+    Build a fully initialized RAGAnything instance from configuration.
+    
+    This is the recommended entrypoint for the agent KB pipeline.
+    Returns a RAGAnything instance ready for document processing.
+    
+    Args:
+        cfg: Optional LightRAGConfig (defaults to env-based config)
+    
+    Returns:
+        Initialized RAGAnything instance
+    """
+    if cfg is None:
+        cfg = LightRAGConfig()
+    
+    # Build and initialize LightRAG
+    lightrag = await build_lightrag(cfg)
+    await lightrag.initialize_storages()
+    await initialize_pipeline_status()
+    
+    # Create vision model function
+    vision = _make_vision_model_func(lightrag)
+    
+    # Import here to avoid circular dependency
+    from .ingestion import make_raganything as _make_rag
+    
+    # Build RAGAnything using the ingestion factory
+    rag_anything = _make_rag(lightrag)
+    
     return rag_anything
+
+
+async def get_initialized_rag(cfg: Optional[LightRAGConfig] = None) -> tuple[RAGAnything, LightRAG]:
+    """
+    Create and initialize LightRAG and RAGAnything, returning (rag, lightrag).
+
+    This is the recommended entrypoint for external callers who want a ready-to-use
+    RAGAnything instance following the ingestion pipeline.
+    
+    Args:
+        cfg: Optional LightRAGConfig (defaults to env-based config)
+    
+    Returns:
+        Tuple of (RAGAnything instance, LightRAG instance)
+    """
+    if cfg is None:
+        cfg = LightRAGConfig()
+    
+    lightrag = await build_lightrag(cfg)
+    await lightrag.initialize_storages()
+    await initialize_pipeline_status()
+    
+    from .ingestion import make_raganything as _make_rag
+    rag_instance = _make_rag(lightrag)
+    
+    return rag_instance, lightrag
