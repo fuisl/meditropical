@@ -1,5 +1,8 @@
 from pydantic import BaseModel, Field, constr
 from typing import List, Dict, Any, Optional
+from dataclasses import dataclass
+
+@dataclass
 class DiseaseHypothesis(BaseModel):
     disease: str
     p: float = Field(ge=0, le=1)
