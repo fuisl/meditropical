@@ -5,10 +5,12 @@ from lightrag.llm.openai import openai_complete_if_cache, openai_embed
 from lightrag.kg.shared_storage import initialize_pipeline_status
 from lightrag.utils import EmbeddingFunc
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 async def load_existing_lightrag():
     # Set up API configuration
-    api_key = "your-api-key"
+    api_key = os.getenv("OPENAI_API_KEY")
     base_url = "http://localhost:8002/v1"  # Optional
     vllm_model_name = "google/medgemma-4b-it"
     embed_model_name = "BAAI/bge-m3"
