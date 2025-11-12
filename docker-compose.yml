@@ -15,9 +15,20 @@ services:
       - ./.env:/app/.env
     env_file:
       - .env
-    restart: unless-stopped
+    # restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      POSTGRES_HOST: postgres
+      QDRANT_URL: http://qdrant:6333
+      LLM_BINDING_HOST: http://host.docker.internal:8002/v1
+      EMBEDDING_BINDING_HOST: http://host.docker.internal:8002/v1
+      REDIS_URI: redis://host.docker.internal:6379
+
+    depends_on:
+      - postgres
+      - qdrant
+      - redis
 
   postgres:
     image: pgvector/pgvector:pg16
@@ -36,9 +47,10 @@ services:
       - "6334:6334"
     volumes:
       - ./data/qdrant_data:/qdrant/storage
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q -O- http://localhost:6333/readyz || curl -fsS http://localhost:6333/readyz || wget -q -O- http://localhost:6333/healthz || curl -fsS http://localhost:6333/healthz || exit 1"]
-      interval: 3s
-      timeout: 2s
-      retries: 40
-      start_period: 5s
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis_data:/data
