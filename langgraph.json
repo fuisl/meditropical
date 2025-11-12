@@ -2,7 +2,7 @@
   "$schema": "https://langgra.ph/schema.json",
   "dependencies": ["."],
   "graphs": {
-    "graph": "./src/agent/graph.py:graph"
+    "med_qa": "./src/benchmark/create_qa_from_kb.py:graph"
   },
   "env": ".env",
   "image_distro": "wolfi"
