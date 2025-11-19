@@ -77,3 +77,6 @@ memory-bank/
 
 uv.lock
 .langgraph_api/
+
+# Secret baseline
+.secrets.baseline
