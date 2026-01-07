@@ -1,21 +1,18 @@
 """
-RAGAS Evaluation Script for LightRAG System
+RAGAS Evaluation Script
 
 Evaluates RAG response quality using RAGAS metrics:
-- ReasoningRecall
+- ReasoningRecall: Does the reasoning trace covers all ground-truth reasoning?
 
 Usage:
-    # Use defaults (sample_dataset.json, http://localhost:9621)
-    python evaluation/eval_json.py
-
-    # Specify custom dataset
+    # Specify dataset
     python evaluation/eval_json.py --dataset my_test.json
     python evaluation/eval_json.py -d my_test.json
 
     # Get help
     python evaluation/eval_json.py --help
 
-Results are saved to: lightrag/evaluation/results/
+Results are saved to: evaluation/results/
     - results_YYYYMMDD_HHMMSS.csv   (CSV export for analysis)
     - results_YYYYMMDD_HHMMSS.json  (Full results with details)
 
@@ -64,7 +61,6 @@ warnings.filterwarnings(
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # use the .env that is inside the current folder
-# allows to use different .env file for each lightrag instance
 # the OS environment variables take precedence over the .env file
 load_dotenv(dotenv_path=".env", override=False)
 
@@ -394,7 +390,7 @@ class Evaluator:
         max_async = int(os.getenv("EVAL_MAX_CONCURRENT", "2"))
 
         logger.info("%s", "=" * 70)
-        logger.info("🚀 Starting RAGAS Evaluation of LightRAG System")
+        logger.info("🚀 Starting RAGAS Evaluation")
         logger.info("🔧 RAGAS Evaluation (Stage 2): %s concurrent", max_async)
         logger.info("%s", "=" * 70)
 
@@ -742,28 +738,18 @@ async def main():
         --dataset, -d: Path to test dataset JSON file (default: sample_dataset.json)
 
     Usage:
-        python lightrag/evaluation/eval_rag_quality.py
-        python lightrag/evaluation/eval_rag_quality.py --dataset my_test.json
-        python lightrag/evaluation/eval_rag_quality.py -d my_test.json -r http://localhost:9621
+        python evaluation/eval_rag_quality.py --dataset my_test.json
     """
     try:
         # Parse command-line arguments
         parser = argparse.ArgumentParser(
-            description="RAGAS Evaluation Script for LightRAG System",
+            description="RAGAS Evaluation Script",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
 Examples:
-  # Use defaults
-  python lightrag/evaluation/eval_rag_quality.py
 
-  # Specify custom dataset
-  python lightrag/evaluation/eval_rag_quality.py --dataset my_test.json
-
-  # Specify custom RAG endpoint
-  python lightrag/evaluation/eval_rag_quality.py --ragendpoint http://my-server.com:9621
-
-  # Specify both
-  python lightrag/evaluation/eval_rag_quality.py -d my_test.json -r http://localhost:9621
+    # Specify dataset
+    python evaluation/eval_rag_quality.py --dataset my_test.json
             """,
         )
 
@@ -778,7 +764,7 @@ Examples:
         args = parser.parse_args()
 
         logger.info("%s", "=" * 70)
-        logger.info("🔍 RAGAS Evaluation - Using Real LightRAG API")
+        logger.info("🔍 RAGAS Evaluation")
         logger.info("%s", "=" * 70)
 
         evaluator = Evaluator(test_dataset_path=args.dataset)
