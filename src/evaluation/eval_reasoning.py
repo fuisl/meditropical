@@ -2,7 +2,7 @@
 RAGAS Evaluation Script
 
 Evaluates RAG response quality using RAGAS metrics:
-- ReasoningRecall: Does the reasoning trace covers all ground-truth reasoning?
+- Reasoning Recall: Does the reasoning trace covers all ground-truth reasoning?
 
 Usage:
     # Specify dataset
@@ -68,7 +68,7 @@ load_dotenv(dotenv_path=".env", override=False)
 try:
     from datasets import Dataset
     from ragas import evaluate
-    from metrics.reasoning_recall import ReasoningRecall
+    from evaluation.metrics.reasoning_recall import ReasoningRecall
     from ragas.llms import LangchainLLMWrapper
     from langchain_ollama import ChatOllama, OllamaEmbeddings
 
