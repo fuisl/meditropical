@@ -74,7 +74,7 @@ try:
         AnswerRelevancy,
         Faithfulness,
     )
-    from metrics.answer_accuracy import AnswerAccuracy
+    from evaluation.metrics.answer_accuracy import AnswerAccuracy
     from ragas.llms import LangchainLLMWrapper
 
     # from langchain_openai import ChatOpenAI, OpenAIEmbeddings
