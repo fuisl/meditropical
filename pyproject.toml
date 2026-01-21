@@ -32,12 +32,10 @@ requires = ["setuptools>=73.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["langgraph.templates.agent", "agent"]
-[tool.setuptools.package-dir]
-"langgraph.templates.agent" = "src/agent"
-"agent" = "src/agent"
-"benchmark" = "src/benchmark"
+package-dir = {"" = "src"}
 
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
@@ -79,3 +77,7 @@ venv = ".venv"
 executionEnvironments = [
   { root = ".", extraPaths = ["LightRAG", "LightRAG/src", "src", "benchmark"] }
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
