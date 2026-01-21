@@ -1,9 +1,20 @@
-from typing import TypedDict, Optional, Dict
+from typing import TypedDict, Optional, Dict, Literal, List
+
+
+class ImageInput(TypedDict):
+    type: Literal["url", "base64", "path"]
+    value: str
+
+
+class EvaluationResult(TypedDict):
+    metric: str
+    score: float
 
 
 class GraphState(TypedDict):
     question: str
-    contexts: list[str] | None
+    images: List[ImageInput] | None
+    contexts: List[str] | None
     answer: str | None
-    reasoning: list[str] | None
-    evaluation: Optional[Dict[str, float]]
+    reasoning: List[str] | None
+    evaluation: List[EvaluationResult] | None
