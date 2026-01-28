@@ -60,7 +60,7 @@ class AnswerRelevancePrompt(PydanticPrompt[QARelevance, AnswerRelevanceScore]):
 
 
 @dataclass
-class AnswerRelevance(MetricWithLLM, SingleTurnMetric):
+class AnswerRelevancy(MetricWithLLM, SingleTurnMetric):
     """
     Answer Relevance measures how relevant the model's answer is
     to the given question.
@@ -72,7 +72,7 @@ class AnswerRelevance(MetricWithLLM, SingleTurnMetric):
 
     _required_columns: t.Dict[MetricType, t.Set[str]] = field(
         default_factory=lambda: {
-            MetricType.SINGLE_TURN: {"question", "response"},
+            MetricType.SINGLE_TURN: {"user_input", "response"},
         }
     )
 
@@ -84,7 +84,7 @@ class AnswerRelevance(MetricWithLLM, SingleTurnMetric):
 
     async def _single_turn_ascore(self, sample, callbacks):
         prompt_input = QARelevance(
-            question=sample.question,
+            question=sample.user_input,
             answer=sample.response,
         )
 
