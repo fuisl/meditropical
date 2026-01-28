@@ -4,3 +4,6 @@
 [submodule "vllm-docker"]
 	path = vllm-docker
 	url = https://github.com/fuisl/vllm-test.git
+[submodule "medgenerate"]
+	path = medgenerate
+	url = https://github.com/fuisl/medgenerate
