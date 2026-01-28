@@ -70,7 +70,7 @@ try:
     from ragas import evaluate
     from evaluation.metrics.reasoning_recall import ReasoningRecall
     from ragas.llms import LangchainLLMWrapper
-    from langchain_ollama import ChatOllama, OllamaEmbeddings
+    from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
     from tqdm import tqdm
 
@@ -157,20 +157,8 @@ class Evaluator:
         if eval_embedding_base_url:
             embedding_kwargs["base_url"] = eval_embedding_base_url
 
-        base_llm = ChatOllama(
-            model=eval_model,  # your local model name (change as needed)
-            temperature=0.0,  # maps to same idea as ChatOpenAI temperature
-            # num_predict=512,                 # optional: control number of output tokens
-            # base_url="http://localhost:11434", # optional: only if not using default
-            client_kwargs={"timeout": 120},  # optional httpx client args
-        )
-
-        # Embeddings
-        self.eval_embeddings = OllamaEmbeddings(
-            model=eval_embedding_model,  # pick the embedding model you've pulled
-            # base_url="http://localhost:11434", # optional
-            client_kwargs={"timeout": 60},
-        )
+        base_llm = ChatOpenAI(**llm_kwargs)
+        self.eval_embeddings = OpenAIEmbeddings(**embedding_kwargs)
 
         # Wrap LLM with LangchainLLMWrapper and enable bypass_n mode for custom endpoints
         # This ensures compatibility with endpoints that don't support the 'n' parameter
@@ -463,8 +451,9 @@ class Evaluator:
             - ragas_score: Overall RAGAS score (0-1)
             - timestamp: When evaluation was run
         """
+        dataset_name = self.test_dataset_path.stem
         csv_path = (
-            self.results_dir / f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            self.results_dir / f"eval_reasoning_{dataset_name}.csv"
         )
 
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -679,9 +668,10 @@ class Evaluator:
         self._display_results_table(results)
 
         # Save JSON results
+        dataset_name = self.test_dataset_path.stem
         json_path = (
             self.results_dir
-            / f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            / f"eval_reasoning_{dataset_name}.json"
         )
         with open(json_path, "w") as f:
             json.dump(summary, f, indent=2)
