@@ -8,6 +8,13 @@
 
 ## Initialization
 
+0. Clone from github
+    ```
+    git clone --recurse-submodules <repo-url>
+    ```
+    LightRAG and vllm-docker are submodules -> Add ```--recurse-submodules```
+
+
 1. Install dependencies and activate
 
     ```bash

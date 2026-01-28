@@ -1,0 +1,63 @@
+{
+  "test_cases": [
+    {
+      "question": "A 62-year-old man presented with a 4-month history of progressive dysphagia that initially involved solid foods and later progressed to difficulty swallowing liquids. He also reported unintentional weight loss of approximately 8 kg over this period. He denied odynophagia, hematemesis, or prior history of gastroesophageal reflux disease. Physical examination was unremarkable. Laboratory studies showed mild normocytic anemia. Contrast-enhanced CT of the chest demonstrated an irregular, circumferential thickening of the mid-esophagus with luminal narrowing. A barium swallow study showed an irregular narrowing with shouldered edges. There was no evidence of distant metastasis on imaging.",
+      "ground_truth": "esophageal malignancy",
+      "ground_truth_reasoning": "Progressive dysphagia suggests esophageal malignancy.\nWeight loss supports a malignant process.",
+      "contexts": [
+        "Esophageal carcinoma commonly presents with progressive dysphagia that advances from solids to liquids and is frequently associated with weight loss.",
+        "Benign strictures are usually related to chronic reflux or caustic injury and are less commonly associated with marked weight loss."
+      ],
+      "answer_reasoning": "Significant weight loss further supports a malignant etiology.",
+      "answer": "progressive dysphagia"
+    },
+
+    {
+      "question": "A 30-year-old man presented with several months of pain and a tender, localized swelling on the left side of his hard palate. Panoramic radiography and CT were unremarkable for bony disease. MRI demonstrated a small, well-circumscribed soft-tissue lesion in the palatal mucosa with high T2 signal. Empiric antibiotics produced no improvement; an incisional biopsy revealed numerous disorganized nerve bundles.",
+      "ground_truth": "traumatic neuroma",
+      "ground_truth_reasoning": "Lack of response to antibiotics argues against infection.\nHigh T2 signal on MRI suggests a soft-tissue nerve lesion.\nBiopsy shows disorganized nerve bundles characteristic of traumatic neuroma.",
+      "contexts": [
+        "Traumatic neuromas arise from nerve injury and histologically show disorganized axonal sprouts and nerve bundle proliferation.",
+        "Peripheral nerve tumors often have high T2 signal on MRI while CT and radiographs can be normal if confined to soft tissue."
+      ],
+      "answer_reasoning": "MRI high T2 signal and biopsy showing disorganized nerve bundles support a nerve-derived lesion.",
+      "answer": "traumatic neuroma"
+    },
+
+    {
+      "question": "A 23-year-old woman presented with 12 hours of right lower quadrant abdominal pain, anorexia, low-grade fever (38.2°C), and nausea. On exam she has localized tenderness and guarding in the right iliac fossa. Labs show leukocytosis (WBC 14.2 x10^9/L). Right lower quadrant ultrasound demonstrates a non-compressible, blind-ended tubular structure 8 mm in diameter with peri-appendiceal fluid.",
+      "ground_truth": "acute appendicitis",
+      "ground_truth_reasoning": "Focal right lower quadrant pain with guarding is classic for appendicitis.\nLeukocytosis and low-grade fever support an inflammatory/infectious process.\nUltrasound shows a non-compressible tubular structure consistent with appendiceal inflammation.",
+      "contexts": [
+        "Acute appendicitis typically presents with periumbilical pain migrating to the right lower quadrant, localized tenderness, fever, and leukocytosis.",
+        "Ultrasound can demonstrate a non-compressible tubular structure and peri-appendiceal fluid consistent with appendicitis."
+      ],
+      "answer_reasoning": "Localizing right lower quadrant pain, fever, and ultrasound findings are consistent with appendicitis.",
+      "answer": "acute appendicitis"
+    },
+
+    {
+      "question": "A 58-year-old woman developed sudden onset dyspnea and pleuritic right-sided chest pain 6 hours after a transatlantic flight. She is tachycardic and mildly hypoxic on room air. D-dimer is elevated and CT pulmonary angiography shows a segmental filling defect in the right lower-lobe pulmonary artery.",
+      "ground_truth": "pulmonary embolism",
+      "ground_truth_reasoning": "Sudden dyspnea with pleuritic chest pain and hypoxia is suggestive of pulmonary embolism.\nRecent prolonged immobilization (long-haul flight) is a risk factor for venous thromboembolism.\nCT pulmonary angiography demonstrating a filling defect confirms pulmonary embolism.",
+      "contexts": [
+        "Pulmonary embolism commonly presents with acute dyspnea, pleuritic chest pain, tachycardia, and hypoxia.",
+        "Long-haul travel and recent prolonged immobilization increase the risk of venous thromboembolism."
+      ],
+      "answer_reasoning": "Acute dyspnea after a long flight and clinical hypoxia strongly point to pulmonary embolism.",
+      "answer": "pulmonary embolism"
+    },
+
+    {
+      "question": "A 70-year-old man was found with sudden-onset left-sided weakness and slurred speech starting one hour ago. On arrival he has left facial droop, 0/5 power in his left leg, and expressive aphasia. Non-contrast head CT shows no hemorrhage; diffusion-weighted MRI demonstrates an acute focal diffusion restriction in the right MCA territory.",
+      "ground_truth": "acute ischemic stroke (right MCA territory)",
+      "ground_truth_reasoning": "Sudden focal neurological deficits localizing to a vascular territory indicate acute ischemia.\nDWI MRI demonstrating restricted diffusion in the right MCA territory confirms an acute ischemic infarct.",
+      "contexts": [
+        "Ischemic stroke presents with sudden focal neurological deficits, often localized to a specific vascular territory.",
+        "Diffusion-weighted MRI detects acute ischemic infarction as areas of restricted diffusion."
+      ],
+      "answer_reasoning": "Focal sudden-onset neuro deficits are typical of an acute stroke.",
+      "answer": "acute ischemic stroke"
+    }
+  ]
+}
