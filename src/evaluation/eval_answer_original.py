@@ -2,7 +2,9 @@
 RAGAS Evaluation Script
 
 Evaluates RAG response quality using RAGAS metrics:
+- Faithfulness: Is the answer factually accurate based on context?
 - Answer Relevance: Is the answer relevant to the question?
+- Answer Accuracy: Is the answer accurate to the ground-truth?
 
 Usage:
     # Specify dataset
@@ -68,10 +70,11 @@ load_dotenv(dotenv_path=".env", override=False)
 try:
     from datasets import Dataset
     from ragas import evaluate
-    # from ragas.metrics import (
-    #     AnswerRelevancy,
-    # )
-    from metrics.answer_relevance import AnswerRelevance as AnswerRelevancy
+    from ragas.metrics import (
+        AnswerRelevancy,
+        Faithfulness,
+    )
+    from evaluation.metrics.answer_accuracy import AnswerAccuracy
     from ragas.llms import LangchainLLMWrapper
 
     from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -304,7 +307,7 @@ class Evaluator:
                     # leave=False ensures the progress bar is cleared after completion,
                     # preventing accumulation of completed bars and allowing position reuse
                     pbar = tqdm(
-                        total=1,
+                        total=3,
                         desc=f"Eval-{idx:02d}",
                         position=position,
                         leave=False,
@@ -314,7 +317,7 @@ class Evaluator:
 
                 eval_results = evaluate(
                     dataset=eval_dataset,
-                    metrics=[AnswerRelevancy()],
+                    metrics=[Faithfulness(), AnswerRelevancy(), AnswerAccuracy()],
                     llm=self.eval_llm,
                     embeddings=self.eval_embeddings,
                     _pbar=pbar,
@@ -335,14 +338,14 @@ class Evaluator:
                     "contexts": contexts,
                     "project": test_case.get("project", "unknown"),
                     "metrics": {
+                        "faithfulness": float(scores_row.get("faithfulness", 0)),
                         "answer_relevance": float(
-                            scores_row.get("answer_relevance", 0)
+                            scores_row.get("answer_relevancy", 0)
                         ),
+                        "answer_accuracy": float(scores_row.get("answer_accuracy", 0)),
                     },
                     "timestamp": datetime.now().isoformat(),
                 }
-
-                print(result)
 
                 # Calculate RAGAS score (average of all metrics, excluding NaN values)
                 metrics = result["metrics"]
@@ -456,13 +459,15 @@ class Evaluator:
         CSV Format:
             - question: The test question
             - project: Project context
+            - faithfulness: Faithfulness score (0-1)
             - answer_relevance: Answer relevance score (0-1)
+            - answer_accuracy: Answer accuracy (0 or 1)
             - ragas_score: Overall RAGAS score (0-1)
             - timestamp: When evaluation was run
         """
         dataset_name = self.test_dataset_path.stem
         csv_path = (
-            self.results_dir / f"eval_answer_relevancy_{dataset_name}.csv"
+            self.results_dir / f"eval_answer_{dataset_name}.csv"
         )
 
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -470,7 +475,9 @@ class Evaluator:
                 "test_number",
                 "question",
                 "project",
+                "faithfulness",
                 "answer_relevance",
+                "answer_accuracy",
                 "ragas_score",
                 "status",
                 "timestamp",
@@ -486,7 +493,9 @@ class Evaluator:
                         "test_number": idx,
                         "question": result.get("question", ""),
                         "project": result.get("project", "unknown"),
+                        "faithfulness": f"{metrics.get('faithfulness', 0):.4f}",
                         "answer_relevance": f"{metrics.get('answer_relevance', 0):.4f}",
+                        "answer_accuracy": f"{metrics.get('answer_accuracy', 0):.4f}",
                         "ragas_score": f"{result.get('ragas_score', 0):.4f}",
                         "status": "success" if metrics else "error",
                         "timestamp": result.get("timestamp", ""),
@@ -518,20 +527,22 @@ class Evaluator:
             results: List of evaluation results
         """
         logger.info("")
-        logger.info("%s", "=" * 95)
+        logger.info("%s", "=" * 115)
         logger.info("📊 EVALUATION RESULTS SUMMARY")
-        logger.info("%s", "=" * 95)
+        logger.info("%s", "=" * 115)
 
         # Table header
         logger.info(
-            "%-4s | %-50s | %7s | %6s | %6s",
+            "%-4s | %-50s | %6s | %7s | %6s |%6s | %6s",
             "#",
             "Question",
+            "Faith",
             "AnswRel",
+            "AnswAcc",
             "RAGAS",
             "Status",
         )
-        logger.info("%s", "-" * 95)
+        logger.info("%s", "-" * 115)
 
         # Table rows
         for result in results:
@@ -545,15 +556,19 @@ class Evaluator:
             metrics = result.get("metrics", {})
             if metrics:
                 # Success case - format each metric, handling NaN values
+                faith = metrics.get("faithfulness", 0)
                 ans_rel = metrics.get("answer_relevance", 0)
+                ans_acc = metrics.get("answer_accuracy", 0)
                 ragas = result.get("ragas_score", 0)
                 status = "✓"
 
                 logger.info(
-                    "%-4d | %-50s | %s | %s | %6s",
+                    "%-4d | %-50s | %s | %s | %s | %s | %6s",
                     test_num,
                     question_display,
+                    self._format_metric(faith, 6),
                     self._format_metric(ans_rel, 7),
+                    self._format_metric(ans_acc, 6),
                     self._format_metric(ragas, 6),
                     status,
                 )
@@ -562,15 +577,17 @@ class Evaluator:
                 error = result.get("error", "Unknown error")
                 error_display = (error[:20] + "...") if len(error) > 23 else error
                 logger.info(
-                    "%-4d | %-50s | %7s | %6s | ✗ %s",
+                    "%-4d | %-50s | %6s | %7s | %6s | %6s | ✗ %s",
                     test_num,
                     question_display,
+                    "N/A",
+                    "N/A",
                     "N/A",
                     "N/A",
                     error_display,
                 )
 
-        logger.info("%s", "=" * 95)
+        logger.info("%s", "=" * 115)
 
     def _calculate_benchmark_stats(
         self, results: List[Dict[str, Any]]
@@ -601,7 +618,9 @@ class Evaluator:
         # Calculate averages for each metric (handling NaN values correctly)
         # Track both sum and count for each metric to handle NaN values properly
         metrics_data = {
+            "faithfulness": {"sum": 0.0, "count": 0},
             "answer_relevance": {"sum": 0.0, "count": 0},
+            "answer_accuracy": {"sum": 0.0, "count": 0},
             "ragas_score": {"sum": 0.0, "count": 0},
         }
 
@@ -609,10 +628,20 @@ class Evaluator:
             metrics = result.get("metrics", {})
 
             # For each metric, sum non-NaN values and count them
+            faithfulness = metrics.get("faithfulness", 0)
+            if not _is_nan(faithfulness):
+                metrics_data["faithfulness"]["sum"] += faithfulness
+                metrics_data["faithfulness"]["count"] += 1
+
             answer_relevance = metrics.get("answer_relevance", 0)
             if not _is_nan(answer_relevance):
                 metrics_data["answer_relevance"]["sum"] += answer_relevance
                 metrics_data["answer_relevance"]["count"] += 1
+
+            answer_accuracy = metrics.get("answer_accuracy", 0)
+            if not _is_nan(answer_accuracy):
+                metrics_data["answer_accuracy"]["sum"] += answer_accuracy
+                metrics_data["answer_accuracy"]["count"] += 1
 
             ragas_score = result.get("ragas_score", 0)
             if not _is_nan(ragas_score):
@@ -680,7 +709,7 @@ class Evaluator:
         dataset_name = self.test_dataset_path.stem
         json_path = (
             self.results_dir
-            / f"eval_answer_relevancy_{dataset_name}.json"
+            / f"eval_answer_{dataset_name}.json"
         )
         with open(json_path, "w") as f:
             json.dump(summary, f, indent=2)
@@ -706,7 +735,9 @@ class Evaluator:
         logger.info("📈 BENCHMARK RESULTS (Average)")
         logger.info("%s", "=" * 70)
         avg = benchmark_stats["average_metrics"]
+        logger.info("Average Faithfulness:      %.4f", avg["faithfulness"])
         logger.info("Average Answer Relevance:  %.4f", avg["answer_relevance"])
+        logger.info("Average Answer Accuracy:    %.4f", avg["answer_accuracy"])
         logger.info("Average RAGAS Score:       %.4f", avg["ragas_score"])
         logger.info("%s", "-" * 70)
         logger.info(
