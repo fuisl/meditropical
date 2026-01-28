@@ -71,10 +71,10 @@ try:
     from datasets import Dataset
     from ragas import evaluate
     from ragas.metrics import (
-        AnswerRelevancy,
+        # AnswerRelevancy,
         Faithfulness,
     )
-    from evaluation.metrics.answer_accuracy import AnswerAccuracy
+    from evaluation.metrics.answer_accuracy import AnswerAccuracy, AnswerRelevancy
     from ragas.llms import LangchainLLMWrapper
 
     # from langchain_openai import ChatOpenAI, OpenAIEmbeddings
