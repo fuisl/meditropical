@@ -10,3 +10,7 @@
 	path = medgenerate
 	url = https://github.com/fuisl/medgenerate
 	branch = main
+[submodule "multimodal-project-report"]
+	path = multimodal-project-report
+	url = https://github.com/fuisl/multimodal-project-report
+	branch = main
