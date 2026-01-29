@@ -41,8 +41,6 @@ No LLM answer generation is required.
 
 **Metrics** included:
 
-- Faithfulness (built-in)
-
 - Answer Relevance (built-in)
 
 - Answer Accuracy (custom)

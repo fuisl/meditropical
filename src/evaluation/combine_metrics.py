@@ -148,7 +148,6 @@ def main():
         # Extract answer metrics
         if 'answer' in config and config['answer']:
             answer_metrics = config['answer'].get('metrics', {})
-            row['Faithfulness'] = f"{answer_metrics.get('faithfulness', 0):.4f}"
             # row['Answer Relevance (Answer)'] = f"{answer_metrics.get('answer_relevance', 0):.4f}"
             row['Answer Accuracy'] = f"{answer_metrics.get('answer_accuracy', 0):.4f}"
             # row['RAGAS Score (Answer)'] = f"{answer_metrics.get('ragas_score', 0):.4f}"

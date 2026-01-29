@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_HOST: postgres
       QDRANT_URL: http://host.docker.internal:6333
-      # LLM_BINDING_HOST: http://host.docker.internal:8002/v1
+      LLM_BINDING_HOST: http://host.docker.internal:8002/v1
       # EMBEDDING_BINDING_HOST: http://host.docker.internal:8002/v1
       REDIS_URI: redis://host.docker.internal:6379
 

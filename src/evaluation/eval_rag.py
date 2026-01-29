@@ -461,8 +461,6 @@ class Evaluator:
         CSV Format:
             - question: The test question
             - project: Project context
-            - faithfulness: Faithfulness score (0-1)
-            - answer_relevance: Answer relevance score (0-1)
             - context_recall: Context recall score (0-1)
             - context_precision: Context precision score (0-1)
             - ragas_score: Overall RAGAS score (0-1)

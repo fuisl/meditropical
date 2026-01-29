@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics import Faithfulness, AnswerRelevancy
+from ragas.metrics import AnswerRelevancy
 from ragas.llms import LangchainLLMWrapper
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 
@@ -63,7 +63,6 @@ class RAGASEvaluator:
         # IMPORTANT: create metrics per call (RAGAS metrics are stateful)
         metrics = [
             AnswerRelevancy(),
-            Faithfulness(),
         ]
 
         results = evaluate(
@@ -79,10 +78,6 @@ class RAGASEvaluator:
             {
                 "metric": "answer_relevancy",
                 "score": float(row.get("answer_relevancy", 0.0)),
-            },
-            {
-                "metric": "faithfulness",
-                "score": float(row.get("faithfulness", 0.0)),
             },
         ]
 
