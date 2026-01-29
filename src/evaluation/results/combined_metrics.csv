@@ -1,0 +1,7 @@
+Model,RAG,Faithfulness,Answer Accuracy,Reasoning Recall,Answer Relevance,Total Tests,Success Rate (%)
+MedGemma 4B,No,0.6837,0.1562,0.4333,0.7051,78,41.0
+MedGemma 4B + RAG,Yes,0.7225,0.2466,0.3979,0.6167,78,100.0
+Gemma 3 4B,No,0.6944,0.1053,0.4887,0.6167,78,100.0
+Gemma 3 4B + RAG,Yes,0.7512,0.3421,0.6434,0.5859,78,100.0
+Gemma 3 4B Finetuned,No,0.6313,0.0938,0.6564,0.6359,78,82.0
+Gemma 3 4B Finetuned + RAG,Yes,0.7130,0.3333,0.6165,0.6051,78,100.0
