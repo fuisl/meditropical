@@ -1,9 +1,12 @@
 [submodule "LightRAG"]
 	path = LightRAG
 	url = https://github.com/fuisl/LightRAG.git
+	branch = main
 [submodule "vllm-docker"]
 	path = vllm-docker
 	url = https://github.com/fuisl/vllm-test.git
+	branch = main
 [submodule "medgenerate"]
 	path = medgenerate
 	url = https://github.com/fuisl/medgenerate
+	branch = main
