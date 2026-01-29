@@ -1,77 +1,53 @@
-# Getting started
+# Meditropical
 
-## Prerequisite
+A medical diagnosis agent system powered by LightRAG and LangGraph for tropical disease diagnosis.
 
-- [ ] Docker Desktop
-- [ ] Cohere
-- [ ] LLM inference (Ollama/vLLM/huggingface) (VLM)
+## Repository Structure
 
-## Initialization
+### Core Directories
 
-0. Clone from github
-    ```
-    git clone --recurse-submodules <repo-url>
-    ```
-    LightRAG and vllm-docker are submodules -> Add ```--recurse-submodules```
+- **`src/`** - Main source code
+  - `agent/` - LangGraph agent implementation
+  - `diagnosis_agent/` - Diagnosis agent logic
+  - `data/` - Data processing utilities
 
+- **`evaluation/`** - Evaluation scripts and metrics
+  - `eval_answer.py` - Answer quality evaluation
+  - `eval_answer_original.py` - Original answer evaluation
+  - `eval_rag.py` - RAG retrieval evaluation
+  - `eval_reasoning.py` - Reasoning evaluation
+  - `combine_metrics.py` - Metrics aggregation
+  - `populate_contexts.py` - Context population for evaluation
+  - `sample_dataset.json` - Sample evaluation dataset
+  - `generated_answers/` - Generated answer outputs
+  - `metrics/` - Evaluation metrics results
+  - `results/` - Evaluation results
 
-1. Install dependencies and activate
+- **`demo/`** - Demo data and documentation
+  - `data/` - Demo datasets
 
-    ```bash
-    uv sync
-    ```
+- **`docs/`** - Project documentation
+  - `SELFHOST.md` - Self-hosting guide
 
-    > _conflicting dependencies --> remove conflicting library zhipou_
+### Configuration Files
 
-    ```bash
-    source .venv/bin/activate
-    ```
+- **`docker-compose.yml`** - Docker services configuration (LightRAG, PostgreSQL, Qdrant, Redis)
+- **`langgraph.json`** - LangGraph configuration
+- **`pyproject.toml`** - Python project dependencies and configuration
+- **`.env.example`** - Environment variables template
+- **`config.ini/`** - Application configuration
 
-2. Setup `.env` from `.env.example`
+### Submodules
 
-3. Init LightRAG instance
+- **`LightRAG/`** - LightRAG framework (forked from HKUDS/LightRAG)
+- **`vllm-docker/`** - vLLM deployment setup
+- **`medgenerate/`** - Medical case generation tools
+- **`multimodal-project-report/`** - Project documentation and reports
 
-    From repo root, run:
+## Services
 
-    ```bash
-    docker compose up
-    ```
-
-> _Postgres DB not exists --> nuke everything (delete /data, docker compose down -v)_
-
-> _Automatically pull image and build_
-
-> _Access LightRAG instance locally via http://localhost:9621_
-
-4. For if you want to test VLM doc input
-
-With virtual environment activated, run
-
-```bash
-python src/test2.py
-```
-
-> _connect to LightRAG instance to see the import result._
-
-## Notes
-
-- Base url for huggingface: https://router.huggingface.co/v1
-- Base url for vllm local host: http://localhost:8002/v1
-
-## Deploy local model with vLLM
-
-```bash
-cd vllm-docker
-```
-
-or pull repo
-
-```bash
-git clone https://github.com/fuisl/vllm-test.git
-```
-
-Then
-
-```bash
-docker compose up
-```
+The Docker Compose setup includes:
+- **LightRAG API** - RAG service (port 9621)
+- **PostgreSQL** - Vector database with pgvector (port 5432)
+- **Qdrant** - Vector search engine (port 6333)
+- **Redis** - Caching layer (port 6379)
