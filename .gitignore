@@ -69,8 +69,8 @@ gui/
 # Frontend build output (built during PyPI release)
 lightrag/api/webui/
 
-# unit-test files
-test_*
-
 # Cline files
 memory-bank/
+
+uv.lock
+.langgraph_api/
